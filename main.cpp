@@ -6,9 +6,12 @@
 using namespace std;
 
 
-static void handle_gl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+static void GLAPIENTRY handle_gl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
-    return;
+    fprintf(stderr, "GL CALLBACK:%s type = 0x%x, severity = 0x%x, message = %s\n",
+        (type == GL_DEBUG_TYPE_ERROR ? " ** GL ERROR **" : ""),
+        type, severity, message);
+    exit(-1);
 }
 
 
@@ -101,6 +104,7 @@ int main(void)
 
     if (glewInit() != GLEW_OK)
         return -1;
+    glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(handle_gl_error, nullptr);
     cout << "Initialized GLEW sucessfully with OpenGL version: " << glGetString(GL_VERSION) << endl;
 
