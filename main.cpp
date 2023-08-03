@@ -6,6 +6,12 @@
 using namespace std;
 
 
+static void handle_gl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+    return;
+}
+
+
 static GLuint compile_gl_shader(GLenum shader_type, const string& source)
 {
     const char* source_string = source.c_str();
@@ -95,8 +101,8 @@ int main(void)
 
     if (glewInit() != GLEW_OK)
         return -1;
-    cout << "Initialize GLEW sucessfully with OpenGL version: " << glGetString(GL_VERSION) << endl;
-
+    glDebugMessageCallback(handle_gl_error, nullptr);
+    cout << "Initialized GLEW sucessfully with OpenGL version: " << glGetString(GL_VERSION) << endl;
 
     /**
      * Configure
@@ -149,7 +155,7 @@ int main(void)
     // Configure shader program
     shader_program = create_gl_shader(
         R"glsl(
-            #version 330 core
+            #version 430 core
 
             layout(location = 0) in vec4 position;
             
@@ -158,7 +164,7 @@ int main(void)
                 gl_Position = position;
             })glsl",
         R"glsl(
-            #version 330 core
+            #version 430 core
 
             out vec4 color;
 
