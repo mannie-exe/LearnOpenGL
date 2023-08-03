@@ -3,39 +3,50 @@
 #include <GLFW/glfw3.h>
 
 
-using namespace std;
+#define ASSERT(x) if (!(x)) __debugbreak();
+#define GLCall(x) GLClearError();\
+    x;\
+    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 
-
-static void GLAPIENTRY handle_gl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+static void GLClearError()
 {
-    fprintf(stderr, "GL CALLBACK:%s type = 0x%x, severity = 0x%x, message = %s\n",
-        (type == GL_DEBUG_TYPE_ERROR ? " ** GL ERROR **" : ""),
-        type, severity, message);
-    exit(-1);
+    while (glGetError());
 }
 
 
-static GLuint compile_gl_shader(GLenum shader_type, const string& source)
+static bool GLLogCall(const char *function, const char * source_file, uint32_t line_number)
+{
+    while (GLenum gl_error = glGetError())
+    {
+        fprintf(stderr, "ERROR | OpenGL [0x%04x] %s\n    in %s @ %s:%d)", gl_error, "<message>", function, source_file, line_number);
+        return false;
+    }
+
+    return true;
+}
+
+
+static GLuint compile_gl_shader(GLenum shader_type, const std::string& source)
 {
     const char* source_string = source.c_str();
 
     uint32_t shader_id = glCreateShader(shader_type);
-    glShaderSource(shader_id, 1, &source_string, nullptr);
-    glCompileShader(shader_id);
+    GLCall(glShaderSource(shader_id, 1, &source_string, nullptr));
+    GLCall(glCompileShader(shader_id));
 
     int32_t compile_result;
-    glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compile_result);
+    GLCall(glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compile_result));
     if (compile_result == GL_FALSE)
     {
         int log_length;
-        glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &log_length);
+        GLCall(glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &log_length));
         char* log_message = (char *)alloca(log_length * sizeof(char));
-        glGetShaderInfoLog(shader_id, log_length, &log_length, log_message);
+        GLCall(glGetShaderInfoLog(shader_id, log_length, &log_length, log_message));
 
-        cout << "Failed to compile shader" << endl;
-        cout << log_message << endl;
+        std::cout << "Failed to compile shader" << std::endl;
+        std::cout << log_message << std::endl;
 
-        glDeleteShader(shader_id);
+        GLCall(glDeleteShader(shader_id));
 
         return 0;
     }
@@ -44,13 +55,13 @@ static GLuint compile_gl_shader(GLenum shader_type, const string& source)
 }
 
 
-static GLuint create_gl_shader(const string& vertex_source, const string& fragment_source)
+static GLuint create_gl_shader(const std::string& vertex_source, const std::string& fragment_source)
 {
     GLuint program_id = glCreateProgram();
 
-    cout << "Creating shader program [" << program_id << "]:" << endl;
-    cout << "    -> VERTEX" << vertex_source << endl;
-    cout << "    -> FRAGMENT" << fragment_source << endl;
+    std::cout << "INFO | Creating shader program [id: " << program_id << "]:" << std::endl;
+    std::cout << "    -> VERTEX" << vertex_source << std::endl;
+    std::cout << "    -> FRAGMENT" << fragment_source << std::endl;
 
     GLuint vertex_id = compile_gl_shader(GL_VERTEX_SHADER, vertex_source);
     if (vertex_id == 0)
@@ -65,18 +76,18 @@ static GLuint create_gl_shader(const string& vertex_source, const string& fragme
         return 0;
     }
 
-    glAttachShader(program_id, vertex_id);
-    glAttachShader(program_id, fragment_id);
+    GLCall(glAttachShader(program_id, vertex_id));
+    GLCall(glAttachShader(program_id, fragment_id));
 
-    glLinkProgram(program_id);
-    glValidateProgram(program_id);
+    GLCall(glLinkProgram(program_id));
+    GLCall(glValidateProgram(program_id));
 
     // TODO: Handle shader link and validation errors
 
-    glDeleteShader(vertex_id);
-    glDeleteShader(fragment_id);
+    GLCall(glDeleteShader(vertex_id));
+    GLCall(glDeleteShader(fragment_id));
 
-    cout << "Shader program created successfully [" << program_id << "]" << endl;
+    std::cout << "INFO | Shader program created successfully [id: " << program_id << "]" << std::endl;
 
     return program_id;
 }
@@ -90,23 +101,28 @@ int main(void)
     GLFWwindow* window;
 
     if (!glfwInit())
+    {
+        std::cout << "ERROR | GLFW failed to initialize" << std::endl;
         return -1;
+    }
 
-    window = glfwCreateWindow(800, 800, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(800, 800, "Hello World", nullptr, nullptr);
     if (!window)
     {
         glfwTerminate();
+        std::cout << "ERROR | GLFW window failed to initialize" << std::endl;
         return -1;
     }
 
     glfwMakeContextCurrent(window);
-    cout << "Initialized GLFW successfully" << endl;
+    std::cout << "INFO | GLFW initialized" << std::endl;
 
     if (glewInit() != GLEW_OK)
+    {
+        std::cout << "ERROR | GLEW failed to initialize" << std::endl;
         return -1;
-    glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(handle_gl_error, nullptr);
-    cout << "Initialized GLEW sucessfully with OpenGL version: " << glGetString(GL_VERSION) << endl;
+    }
+    std::cout << "INFO | GLEW initialized, OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     /**
      * Configure
@@ -132,11 +148,11 @@ int main(void)
          0.5f,  -0.5f,
     };
 
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, v_buffer_size, &vertex_data, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, v_component_count, GL_FLOAT, false, v_buffer_stride, (const void*)0);
-    glEnableVertexAttribArray(0);
+    GLCall(glGenBuffers(1, &vertex_buffer));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, v_buffer_size, &vertex_data, GL_STATIC_DRAW));
+    GLCall(glVertexAttribPointer(0, v_component_count, GL_FLOAT, false, v_buffer_stride, (const void*)0));
+    GLCall(glEnableVertexAttribArray(0));
 
     // Configure index/element buffer
     const uint32_t e_component_size_bytes = sizeof(GLuint);
@@ -152,9 +168,9 @@ int main(void)
         2, 1, 3,
     };
 
-    glGenBuffers(1, &element_buffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, e_buffer_size, &element_data, GL_STATIC_DRAW);
+    GLCall(glGenBuffers(1, &element_buffer));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer));
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, e_buffer_size, &element_data, GL_STATIC_DRAW));
 
     // Configure shader program
     shader_program = create_gl_shader(
@@ -176,7 +192,7 @@ int main(void)
             {
                 color = vec4(0.03, 0.67, 0.92, 1.0);
             })glsl");
-    glUseProgram(shader_program);
+    GLCall(glUseProgram(shader_program));
 
     /**
      * Render loop
@@ -184,22 +200,21 @@ int main(void)
     while (!glfwWindowShouldClose(window))
     {
         // Clear draw buffer
-        glClear(GL_COLOR_BUFFER_BIT);
+        GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         // Draw vertices
-        glDrawElements(GL_TRIANGLES, e_buffer_length, GL_UNSIGNED_INT, nullptr);
+        GLCall(glDrawElements(GL_TRIANGLES, e_buffer_length, GL_UNSIGNED_INT, nullptr));
 
         // Swap draw buffers
-        glfwSwapBuffers(window);
+        GLCall(glfwSwapBuffers(window));
 
-        glfwPollEvents();
+        GLCall(glfwPollEvents());
     }
 
     /**
      * Exit
      */
-    glDeleteProgram(shader_program);
-
+    GLCall(glDeleteProgram(shader_program));
     glfwTerminate();
 
     return 0;
