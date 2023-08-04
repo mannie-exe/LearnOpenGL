@@ -2,6 +2,7 @@
 #include <ctime>
 #include "renderer.h"
 #include <GLFW/glfw3.h>
+#include "data_buffer.h"
 
 
 static GLuint compile_gl_shader(GLenum shader_type, const std::string& source)
@@ -111,65 +112,56 @@ int main(void)
     /**
      * Configure rendering context
      */
-    GLuint vertex_buffer;
-    GLuint mesh_buffer[2];
-    GLuint shader_program;
-
-    // "component" refers to one part of a 2D vector (i.e. x or y)
-    const uint32_t v_component_size_bytes = sizeof(GLfloat);
-    const uint32_t v_component_count = 2;
-    const uint32_t vertex_count = 4;
-
-    const uint32_t v_buffer_length = vertex_count * v_component_count;
-    const uint32_t v_buffer_size = v_buffer_length * v_component_size_bytes;
-    const uint32_t v_buffer_stride = v_component_count * v_component_size_bytes;
-
-    const uint32_t e_component_size_bytes = sizeof(GLuint);
-    const uint32_t e_component_count = 3;
-    const uint32_t element_count = 2;
-
-    const uint32_t e_buffer_length = element_count * e_component_count;
-    const uint32_t e_buffer_size = e_buffer_length * e_component_size_bytes;
-    const uint32_t e_buffer_stride = e_component_count * e_component_size_bytes;
-
-    GL_CALL(glGenBuffers(2, mesh_buffer));
 
     // VAO
     //
     // Configure vertex array buffer
-    GL_CALL(glGenVertexArrays(1, &vertex_buffer));
-    GL_CALL(glBindVertexArray(vertex_buffer));
+    GLuint vertex_array;
+    GL_CALL(glGenVertexArrays(1, &vertex_array));
+    GL_CALL(glBindVertexArray(vertex_array));
 
     // VBO
     // 
     // Configure vertex position buffer
-    const GLfloat vertex_data[v_buffer_length] = {
+    // "component" refers to one part of a 2D vector (i.e. x or y)
+    const uint32_t v_component_size = sizeof(float);
+    const uint32_t v_component_count = 2;
+    const uint32_t v_count = 4;
+    const uint32_t v_buffer_count = v_count * v_component_count;
+    const uint32_t v_buffer_stride = v_component_count * v_component_size;
+    const float vertex_data[v_buffer_count] = {
         -0.5f,   0.5f,
          0.5f,   0.5f,
         -0.5f,  -0.5f,
          0.5f,  -0.5f,
     };
+    GL_DataBuffer<float> vertex_buffer(GL_ARRAY_BUFFER, v_buffer_count, vertex_data, GL_STATIC_DRAW);
 
-    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, mesh_buffer[0]));
-    GL_CALL(glBufferData(GL_ARRAY_BUFFER, v_buffer_size, &vertex_data, GL_STATIC_DRAW));
+    // Attribute Pointer
+    //
+    // Configure VBO layout; shape and position. Acts on last bound VAO and VBO
     GL_CALL(glEnableVertexAttribArray(0));
     GL_CALL(glVertexAttribPointer(0, v_component_count, GL_FLOAT, false, v_buffer_stride, (const void*)0));
 
     // EBO
     // 
     // Configure index/element buffer
-    const GLuint element_data[e_buffer_length] = {
+    const uint32_t e_component_count = 3;
+    const uint32_t e_count = 2;
+    const uint32_t e_buffer_count = e_count * e_component_count;
+    const uint32_t element_data[e_buffer_count] = {
         0, 1, 2,
         2, 1, 3,
     };
+    GL_DataBuffer<uint32_t> index_buffer(GL_ELEMENT_ARRAY_BUFFER, e_buffer_count, element_data, GL_STATIC_DRAW);
 
-    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_buffer[1]));
-    GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, e_buffer_size, &element_data, GL_STATIC_DRAW));
-
+    // Shaders
+    // 
     // Configure shader program
+    GLuint shader_program;
     shader_program = create_gl_shader(
         R"glsl(
-            #version 430 core
+            #version 460 core
 
             layout(location = 0) in vec4 position;
             
@@ -178,7 +170,7 @@ int main(void)
                 gl_Position = position;
             })glsl",
         R"glsl(
-            #version 430 core
+            #version 460 core
 
             uniform float u_time;
             uniform vec4 u_color;
@@ -191,6 +183,8 @@ int main(void)
             })glsl");
     GL_CALL(glUseProgram(shader_program));
 
+    // Shader Uniforms
+    // 
     // Configure shader uniforms
     GL_CALL(uint32_t u_time_location = glGetUniformLocation(shader_program, "u_time"));
     ASSERT(u_time_location != -1);
@@ -198,11 +192,22 @@ int main(void)
     ASSERT(u_color_location != -1);
     GL_CALL(glUniform4f(u_color_location, 0.03f, 0.67f, 0.92f, 1.0f));
 
-    // Clear draw state before loop
+    // Clear
+    // 
+    //fprintf(stderr, "%d, %d, %d\n", vertex_array, vertex_buffer.get_id(), index_buffer.get_id());
+    //int32_t _vao, _vbo, _ebo;
+    //glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &_vao);
+    //glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &_vbo);
+    //glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &_ebo);
+    //fprintf(stderr, "%d, %d, %d\n", _vao, _vbo, _ebo);
     GL_CALL(glBindVertexArray(0));
     GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
     GL_CALL(glUseProgram(0));
+    //glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &_vao);
+    //glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &_vbo);
+    //glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &_ebo);
+    //fprintf(stderr, "%d, %d, %d\n", _vao, _vbo, _ebo);
 
     /**
      * Render loop
@@ -210,8 +215,10 @@ int main(void)
     while (!glfwWindowShouldClose(window))
     {
         // Bind draw state buffers
-        GL_CALL(glBindVertexArray(vertex_buffer));
-        GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_buffer[1]));
+        GL_CALL(glBindVertexArray(vertex_array));
+        vertex_buffer.gl_bind();
+        GL_CALL(glEnableVertexAttribArray(0));
+        index_buffer.gl_bind();
         GL_CALL(glUseProgram(shader_program));
 
         // Configure shader uniforms
@@ -221,13 +228,15 @@ int main(void)
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 
         // Draw vertices
-        GL_CALL(glDrawElements(GL_TRIANGLES, e_buffer_length, GL_UNSIGNED_INT, nullptr));
-
+        GL_CALL(glDrawElements(GL_TRIANGLES, e_buffer_count, GL_UNSIGNED_INT, nullptr));
         // Swap draw buffers
         GL_CALL(glfwSwapBuffers(window));
-
         // Run GLFW event loop
         GL_CALL(glfwPollEvents());
+
+        // Clear draw state buffers
+        index_buffer.gl_unbind();
+        vertex_buffer.gl_unbind();
     }
 
     /**

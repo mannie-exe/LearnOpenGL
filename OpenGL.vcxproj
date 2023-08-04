@@ -143,15 +143,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\index_buffer.cpp" />
+    <ClCompile Include="src\data_buffer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer.cpp" />
-    <ClCompile Include="src\vertex_buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\index_buffer.h" />
+    <ClInclude Include="include\data_buffer.h" />
     <ClInclude Include="include\renderer.h" />
-    <ClInclude Include="include\vertex_buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
