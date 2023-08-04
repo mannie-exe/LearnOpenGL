@@ -1,7 +1,7 @@
 # LearnOpenGL
 > https://thecherno.com/opengl
 >
-> [https://www.youtube.com/playlist?list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2]
+> https://www.youtube.com/playlist?list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2
 
 While I've studied OpenGL in the past, this week I'm stepping through Cherno's OpenGL course (linked above) in order to stop stubling through Godot or Unreal blindly.
 
