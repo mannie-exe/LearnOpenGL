@@ -137,7 +137,7 @@ int main(void)
     };
     GL_DataBuffer<float> vertex_buffer(GL_ARRAY_BUFFER, v_buffer_count, vertex_data, GL_STATIC_DRAW);
 
-    // Attribute Pointer
+    // VAA
     //
     // Configure VBO layout; shape and position. Acts on last bound VAO and VBO
     GL_CALL(glEnableVertexAttribArray(0));
