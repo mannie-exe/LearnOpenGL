@@ -20,7 +20,7 @@ GL_DataBuffer<T>::GL_DataBuffer(uint32_t buffer_type, uint32_t data_count, const
 
     GL_CALL(glGenBuffers(1, &m_gl_id));
     GL_CALL(glBindBuffer(m_buffer_type, m_gl_id));
-    GL_CALL(glBufferData(m_buffer_type, m_data_count * sizeof(T), &buffer_data, buffer_usage));
+    GL_CALL(glBufferData(m_buffer_type, m_data_count * sizeof(T), buffer_data, buffer_usage));
 
     fprintf(stdout, "INFO | Created GL_DataBuffer: type = 0x%04x, count = %d, usage = 0x%04x [id: %d]\n", m_buffer_type, m_data_count, buffer_usage, m_gl_id);
     std::string type_name = std::string(typeid(buffer_data[0]).name());
