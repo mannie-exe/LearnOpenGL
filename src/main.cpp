@@ -96,20 +96,16 @@ int main(void)
          * Shaders
          */
         GL_ShaderProgram shader_program;
-        uint32_t u_time_location;
-        uint32_t u_color_location;
         {
             // Initialize shader program
             shader_program.create("./res/shaders/example.vert", "./res/shaders/example.frag");
             shader_program.bind();
 
-            // Configure shader uniforms
-            GL_CALL(u_time_location = glGetUniformLocation(shader_program.get_id(), "u_time"));
-            GL_CALL(u_color_location = glGetUniformLocation(shader_program.get_id(), "u_color"));
-            GL_CALL(glUniform4f(u_color_location, 0.03f, 0.67f, 0.92f, 1.0f));
+            // Configure static shader uniforms
+            shader_program.set_uniform_4f("u_color", 0.03f, 0.67f, 0.92f, 1.0f);
 
             // Clear shader state
-            //shader_program.unbind();
+            shader_program.unbind();
         }
 
         /**
@@ -122,8 +118,8 @@ int main(void)
             index_buffer.bind();
 
             // Configure GL shader state
-            //shader_program.bind();
-            GL_CALL(glUniform1f(u_time_location, clock() / (float)CLOCKS_PER_SEC));
+            shader_program.bind();
+            shader_program.set_uniform_1f("u_time", clock() / (float)CLOCKS_PER_SEC);
 
             // Clear frame buffer
             GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
@@ -135,7 +131,7 @@ int main(void)
             GL_CALL(glfwPollEvents());
 
             // Clear GL state
-            //shader_program.unbind();
+            shader_program.unbind();
             index_buffer.unbind();
             vertex_array.unbind();
         }

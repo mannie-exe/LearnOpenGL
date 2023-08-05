@@ -4,8 +4,7 @@
 #include <iostream>
 
 
-GL_ShaderProgram::GL_ShaderProgram() :
-    m_vert_file_path(""), m_frag_file_path("")
+GL_ShaderProgram::GL_ShaderProgram()
 {
     GL_CALL(m_gl_id = glCreateProgram());
     ASSERT(m_gl_id);
@@ -49,11 +48,26 @@ uint32_t GL_ShaderProgram::compile_shader(uint32_t gl_shader_type, const char* s
 }
 
 
+int32_t GL_ShaderProgram::get_uniform_location(const std::string& uniform_name)
+{
+    const char* name_raw = uniform_name.c_str();
+
+    if (m_uniform_location_cache.find(name_raw) == m_uniform_location_cache.end())
+    {
+        GL_CALL(int32_t uniform_location = glGetUniformLocation(m_gl_id, name_raw));
+        if (uniform_location == -1)
+        {
+            fprintf(stdout, "WARN | Shader uniform location not found [uniform: %s, shader_program_id: %d]", name_raw, m_gl_id);
+        }
+        m_uniform_location_cache[name_raw] = uniform_location;
+    }
+
+    return m_uniform_location_cache[name_raw];
+}
+
+
 void GL_ShaderProgram::create(const std::string& vert_file_path, const std::string& frag_file_path)
 {
-    m_vert_file_path = vert_file_path;
-    m_frag_file_path = frag_file_path;
-
     uint32_t vert_shader_id = compile_shader(GL_VERTEX_SHADER, read_file(vert_file_path).c_str());
     ASSERT(vert_shader_id);
     uint32_t frag_shader_id = compile_shader(GL_FRAGMENT_SHADER, read_file(frag_file_path).c_str());
@@ -67,6 +81,18 @@ void GL_ShaderProgram::create(const std::string& vert_file_path, const std::stri
 
     GL_CALL(glDeleteShader(vert_shader_id));
     GL_CALL(glDeleteShader(frag_shader_id));
+}
+
+
+void GL_ShaderProgram::set_uniform_1f(const std::string& uniform_name, float v0)
+{
+    GL_CALL(glUniform1f(get_uniform_location(uniform_name), v0));
+}
+
+
+void GL_ShaderProgram::set_uniform_4f(const std::string& uniform_name, float v0, float v1, float v2, float v3)
+{
+    GL_CALL(glUniform4f(get_uniform_location(uniform_name), v0, v1, v2, v3));
 }
 
 
