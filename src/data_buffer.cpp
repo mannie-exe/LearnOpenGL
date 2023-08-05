@@ -1,6 +1,6 @@
-#include <iostream>
 #include "data_buffer.h"
 #include "renderer.h"
+#include <cstdio>
 
 
 template <typename T>
@@ -15,29 +15,16 @@ GL_DataBuffer<T>::GL_DataBuffer(uint32_t buffer_type, uint32_t data_count, const
 
     default:
         fprintf(stderr, "ERROR | Invalid OpenGL buffer type: 0x%04x", m_buffer_type);
-        exit(-1);
+        ASSERT(0);
     }
+
+    /**
+     * TODO: Advanced type-checking can be done here to ensure incorrect types aren't used for certain buffers
+     */
 
     GL_CALL(glGenBuffers(1, &m_gl_id));
     GL_CALL(glBindBuffer(m_buffer_type, m_gl_id));
     GL_CALL(glBufferData(m_buffer_type, m_data_count * sizeof(T), buffer_data, buffer_usage));
-
-    fprintf(stdout, "INFO | Created GL_DataBuffer: type = 0x%04x, count = %d, usage = 0x%04x [id: %d]\n", m_buffer_type, m_data_count, buffer_usage, m_gl_id);
-    std::string type_name = std::string(typeid(buffer_data[0]).name());
-    if (!type_name.compare("unsigned int"))
-    {
-        for (uint32_t idx = 0; idx < m_data_count; idx++)
-        {
-            fprintf(stdout, "    [%d] -> %d\n", idx, (uint32_t)buffer_data[idx]);
-        }
-    }
-    if (!type_name.compare("float"))
-    {
-        for (uint32_t idx = 0; idx < m_data_count; idx++)
-        {
-            fprintf(stdout, "    [%d] -> %.2f\n", idx, (float)buffer_data[idx]);
-        }
-    }
 }
 
 
@@ -62,5 +49,12 @@ void GL_DataBuffer<T>::gl_unbind() const
 }
 
 
-template class GL_DataBuffer<float>;
+template class GL_DataBuffer<signed char>;
+template class GL_DataBuffer<unsigned char>;
+template class GL_DataBuffer<short>;
+template class GL_DataBuffer<unsigned short>;
+template class GL_DataBuffer<int32_t>;
 template class GL_DataBuffer<uint32_t>;
+template class GL_DataBuffer<float>;
+template class GL_DataBuffer<double>;
+template class GL_DataBuffer<int32_t>;

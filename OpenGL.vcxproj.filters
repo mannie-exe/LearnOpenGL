@@ -24,12 +24,18 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\vertex_array.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\data_buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vertex_array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

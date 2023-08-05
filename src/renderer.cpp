@@ -1,5 +1,6 @@
-#include <iostream>
 #include "renderer.h"
+#include <cstdint>
+#include <cstdio>
 
 
 void gl_clear_error()

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
 
 template <typename T>
@@ -13,9 +13,11 @@ private:
 
 public:
     GL_DataBuffer(uint32_t buffer_type, uint32_t data_count, const T* buffer_data, uint32_t buffer_usage);
+
     ~GL_DataBuffer();
 
     void gl_bind() const;
+
     void gl_unbind() const;
 
     inline uint32_t get_id() { return m_gl_id;  }
