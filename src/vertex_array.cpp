@@ -8,6 +8,7 @@ template<typename T>
 GL_VertexArray<T>::GL_VertexArray()
 {
     GL_CALL(glGenVertexArrays(1, &m_gl_id));
+    ASSERT(m_gl_id);
 }
 
 
