@@ -34,7 +34,7 @@ static GLuint compile_gl_shader(GLenum shader_type, const std::string& source)
 }
 
 
-static GLuint create_gl_shader(const std::string& vertex_source, const std::string& fragment_source)
+static uint32_t create_gl_shader(const std::string& vertex_source, const std::string& fragment_source)
 {
     GL_CALL(GLuint program_id = glCreateProgram()); 
 
@@ -42,16 +42,14 @@ static GLuint create_gl_shader(const std::string& vertex_source, const std::stri
     std::cout << "    -> VERTEX" << vertex_source << std::endl;
     std::cout << "    -> FRAGMENT" << fragment_source << std::endl;
 
-    GLuint vertex_id = compile_gl_shader(GL_VERTEX_SHADER, vertex_source);
+    uint32_t vertex_id = compile_gl_shader(GL_VERTEX_SHADER, vertex_source);
     if (vertex_id == 0)
     {
-        // TODO: Handle shader errors
         return 0;
     }
-    GLuint fragment_id = compile_gl_shader(GL_FRAGMENT_SHADER, fragment_source);
+    uint32_t fragment_id = compile_gl_shader(GL_FRAGMENT_SHADER, fragment_source);
     if (fragment_id == 0)
     {
-        // TODO: Handle shader errors
         return 0;
     }
 
@@ -75,39 +73,40 @@ static GLuint create_gl_shader(const std::string& vertex_source, const std::stri
 int main(void)
 {
     /**
-     * Initialize window
+     * Initialize program context (Window and OpenGL)
      */
     GLFWwindow* window;
-
-    // Initialize GLFW core
-    if (!glfwInit())
     {
-        std::cout << "ERROR | GLFW > Core failed to initialize" << std::endl;
-        return -1;
-    }
-    std::cout << "INFO | GLFW > Core initialized" << std::endl;
+        // Initialize GLFW core
+        if (!glfwInit())
+        {
+            std::cout << "ERROR | GLFW > Core failed to initialize" << std::endl;
+            return -1;
+        }
+        std::cout << "INFO | GLFW > Core initialized" << std::endl;
 
-    // Create window
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    if (!(window = glfwCreateWindow(800, 800, "Hello World", nullptr, nullptr)))
-    {
-        glfwTerminate();
-        std::cout << "ERROR | GLFW > Window failed to initialize" << std::endl;
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
-    std::cout << "INFO | GLFW > Window initialized" << std::endl;
+        // Create window
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        if (!(window = glfwCreateWindow(800, 800, "Hello World", nullptr, nullptr)))
+        {
+            glfwTerminate();
+            std::cout << "ERROR | GLFW > Window failed to initialize" << std::endl;
+            return -1;
+        }
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(1);
+        std::cout << "INFO | GLFW > Window initialized" << std::endl;
 
-    // Initialize OpenGL
-    if (glewInit())
-    {
-        std::cout << "ERROR | GLEW failed to initialize" << std::endl;
-        return -1;
+        // Initialize OpenGL
+        if (glewInit())
+        {
+            std::cout << "ERROR | GLEW failed to initialize" << std::endl;
+            return -1;
+        }
+        fprintf(stdout, "INFO | GLEW > OpenGL initialized: v%s\n", glGetString(GL_VERSION));
     }
-    std::cout << "INFO | GLEW initialized; using OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     /**
      * Enter OpenGL rendering context
@@ -197,6 +196,10 @@ int main(void)
             {
                 color = vec4(u_color.rgb * ((sin(u_time) + 1.0) * 0.5), 1.0);
             })glsl");
+            if (shader_program == 0)
+            {
+                exit(-1);
+            }
             GL_CALL(glUseProgram(shader_program));
 
             // Uniforms
