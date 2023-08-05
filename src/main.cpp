@@ -112,7 +112,9 @@ int main(void)
      * Enter OpenGL rendering context
      */
     {
-        // GL Buffers
+        /**
+         * GL Buffers
+         */
         GLuint vertex_array;
         GL_DataBuffer<float>* vertex_buffer;
         GL_DataBuffer<uint32_t>* index_buffer;
@@ -166,7 +168,9 @@ int main(void)
             //fprintf(stderr, "%d, %d, %d\n", _vao, _vbo, _ebo);
         }
 
-        // Shaders
+        /**
+         * Shaders
+         */
         GLuint shader_program;
         uint32_t u_time_location;
         uint32_t u_color_location;
