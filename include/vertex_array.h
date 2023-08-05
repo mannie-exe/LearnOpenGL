@@ -12,8 +12,10 @@ private:
     uint32_t m_gl_id;
 
 public:
-    GL_VertexArray(GL_AttribArray* attrib_array, GL_DataBuffer<T>* data_buffer);
+    GL_VertexArray();
     ~GL_VertexArray();
+
+    void gl_bind_buffer(GL_AttribArray* attrib_array, GL_DataBuffer<T>* data_buffer);
 
     inline void gl_bind() const;
     inline void gl_unbind() const;

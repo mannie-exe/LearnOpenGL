@@ -122,15 +122,13 @@ int main(void)
         GL_AttribArray* attrib_array;
         GL_DataBuffer<uint32_t>* index_buffer;
         {
-            // "component" refers to one part of a 2D vector (i.e. x or y)
+            // Initialize VAO; it can exist without a VBO and its layout
+            vertex_array = new GL_VertexArray<float>();
+
+            // VBO; configure vertex position buffer
             const uint32_t v_component_count = 2;
             const uint32_t v_count = 4;
             const uint32_t v_buffer_count = v_count * v_component_count;
-            const uint32_t e_component_count = 3;
-            const uint32_t e_count = 2;
-            const uint32_t e_buffer_count = e_count * e_component_count;
-
-            // VBO; configure vertex position buffer
             const float vertex_data[v_buffer_count] = {
                 -0.5f,   0.5f,
                  0.5f,   0.5f,
@@ -144,9 +142,12 @@ int main(void)
             attrib_array->push<float>(2, false);
 
             // VAO; configure vertex array object
-            vertex_array = new GL_VertexArray<float>(attrib_array, vertex_buffer);
+            vertex_array->gl_bind_buffer(attrib_array, vertex_buffer);
             
             // EBO; configure index/element buffer
+            const uint32_t e_component_count = 3;
+            const uint32_t e_count = 2;
+            const uint32_t e_buffer_count = e_count * e_component_count;
             const uint32_t element_data[e_buffer_count] = {
                 0, 1, 2,
                 2, 1, 3,
