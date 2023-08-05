@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "data_buffer.h"
 #include "vertex_array.h"
+#include "attrib_array.h"
 
 
 static GLuint compile_gl_shader(GLenum shader_type, const std::string& source)
@@ -118,6 +119,7 @@ int main(void)
          */
         GL_VertexArray<float>* vertex_array;
         GL_DataBuffer<float>* vertex_buffer;
+        GL_AttribArray* attrib_array;
         GL_DataBuffer<uint32_t>* index_buffer;
         {
             // "component" refers to one part of a 2D vector (i.e. x or y)
@@ -137,9 +139,13 @@ int main(void)
             };
             vertex_buffer = new GL_DataBuffer<float>(GL_ARRAY_BUFFER, v_buffer_count, vertex_data, GL_STATIC_DRAW);
 
-            // VAO + VAA; configure VBO layout via vertex array buffer
-            vertex_array = new GL_VertexArray<float>(v_component_count, v_count, vertex_buffer);
+            // VAA; configure VBO layout
+            attrib_array = new GL_AttribArray();
+            attrib_array->push<float>(2, false);
 
+            // VAO; configure vertex array object
+            vertex_array = new GL_VertexArray<float>(attrib_array, vertex_buffer);
+            
             // EBO; configure index/element buffer
             const uint32_t element_data[e_buffer_count] = {
                 0, 1, 2,

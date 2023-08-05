@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\attrib_array.cpp" />
+    <ClCompile Include="src\gl_utils.cpp" />
     <ClCompile Include="src\vertex_array.cpp" />
     <ClCompile Include="src\data_buffer.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -150,6 +152,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\data_buffer.h" />
+    <ClInclude Include="include\attrib_array.h" />
+    <ClInclude Include="include\gl_utils.h" />
     <ClInclude Include="include\vertex_array.h" />
     <ClInclude Include="include\renderer.h" />
   </ItemGroup>
