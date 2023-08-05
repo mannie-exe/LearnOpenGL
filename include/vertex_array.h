@@ -21,8 +21,8 @@ public:
 
     void gl_unbind() const;
 
-    inline uint32_t get_id() { return m_gl_id; }
-    inline uint32_t get_type() { return m_gl_type; }
-    inline uint32_t get_component_count() { return m_component_count; }
-    inline uint32_t get_vertex_count() { return m_vertex_count; }
+    inline uint32_t get_id() const { return m_gl_id; }
+    inline uint32_t get_type() const { return m_gl_type; }
+    inline uint32_t get_component_count() const { return m_component_count; }
+    inline uint32_t get_vertex_count() const { return m_vertex_count; }
 };
