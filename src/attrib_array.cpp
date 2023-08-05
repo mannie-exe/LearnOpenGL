@@ -7,6 +7,12 @@ GL_AttribArray::GL_AttribArray() :
     m_stride(0) {}
 
 
+GL_AttribArray::~GL_AttribArray()
+{
+    m_layout.clear();
+}
+
+
 template<typename T>
 void GL_AttribArray::push(uint32_t count, bool normalized)
 {

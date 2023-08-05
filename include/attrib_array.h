@@ -23,6 +23,8 @@ private:
 public:
     GL_AttribArray();
 
+    ~GL_AttribArray();
+
     template<typename T>
     void push(uint32_t count, bool normalized);
 
