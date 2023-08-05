@@ -111,29 +111,18 @@ int main(void)
         /**
          * Render Loop
          */
+        GL_Renderer renderer;
         while (!glfwWindowShouldClose(window))
         {
-            // Configure GL buffer state
-            vertex_array.bind();
-            index_buffer.bind();
-
-            // Configure GL shader state
-            shader_program.bind();
-            shader_program.set_uniform_1f("u_time", clock() / (float)CLOCKS_PER_SEC);
-
             // Clear frame buffer
-            GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+            renderer.clear();
             // Draw buffers
-            GL_CALL(glDrawElements(GL_TRIANGLES, index_buffer.get_count(), GL_UNSIGNED_INT, nullptr));
+            renderer.draw<float, uint32_t>(&vertex_array, &index_buffer, &shader_program);
+
             // Swap frame buffers
             GL_CALL(glfwSwapBuffers(window));
             // Run GLFW event loop
             GL_CALL(glfwPollEvents());
-
-            // Clear GL state
-            shader_program.unbind();
-            index_buffer.unbind();
-            vertex_array.unbind();
         }
     }
 
