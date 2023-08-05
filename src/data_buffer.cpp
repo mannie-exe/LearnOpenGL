@@ -27,7 +27,6 @@ GL_DataBuffer<T>::GL_DataBuffer(uint32_t buffer_type, uint32_t data_count, const
     GL_CALL(glBufferData(m_buffer_type, m_data_count * sizeof(T), buffer_data, buffer_usage));
 }
 
-
 template <typename T>
 GL_DataBuffer<T>::~GL_DataBuffer()
 {

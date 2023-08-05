@@ -4,7 +4,7 @@
 
 
 template<typename T>
-inline GL_VertexArray<T>::GL_VertexArray(uint32_t component_count, uint32_t vertex_count, GL_DataBuffer<T>* gl_data_buffer) :
+GL_VertexArray<T>::GL_VertexArray(uint32_t component_count, uint32_t vertex_count, GL_DataBuffer<T>* gl_data_buffer) :
     m_gl_type(0), m_component_count(component_count), m_vertex_count(vertex_count)
 {
     /**
@@ -61,21 +61,21 @@ inline GL_VertexArray<T>::GL_VertexArray(uint32_t component_count, uint32_t vert
 
 
 template<typename T>
-inline GL_VertexArray<T>::~GL_VertexArray()
+GL_VertexArray<T>::~GL_VertexArray()
 {
     GL_CALL(glDeleteVertexArrays(1, &m_gl_id));
 }
 
 
 template<typename T>
-inline void GL_VertexArray<T>::gl_bind() const
+void GL_VertexArray<T>::gl_bind() const
 {
     GL_CALL(glBindVertexArray(m_gl_id));
 }
 
 
 template<typename T>
-inline void GL_VertexArray<T>::gl_unbind() const
+void GL_VertexArray<T>::gl_unbind() const
 {
     GL_CALL(glBindVertexArray(0));
 }
@@ -90,4 +90,3 @@ template class GL_VertexArray<uint32_t>;
 template class GL_VertexArray<float>;
 template class GL_VertexArray<double>;
 template class GL_VertexArray<int32_t>;
-
