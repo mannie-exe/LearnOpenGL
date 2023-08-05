@@ -60,14 +60,14 @@ void GL_DataBuffer<T>::set_data(uint32_t gl_buffer_type, uint32_t data_count, co
 
 
 template<typename T>
-inline void GL_DataBuffer<T>::bind() const
+void GL_DataBuffer<T>::bind() const
 {
     GL_CALL(glBindBuffer(m_gl_buffer_type, m_gl_id));
 }
 
 
 template<typename T>
-inline void GL_DataBuffer<T>::unbind() const
+void GL_DataBuffer<T>::unbind() const
 {
     GL_CALL(glBindBuffer(m_gl_buffer_type, 0));
 }

@@ -19,8 +19,8 @@ public:
 
     void set_buffer(GL_AttribArray* attrib_array, GL_DataBuffer<T>* data_buffer);
 
-    inline void bind() const;
-    inline void unbind() const;
+    void bind() const;
+    void unbind() const;
 
     inline uint32_t get_id() const { return m_gl_id; }
 };

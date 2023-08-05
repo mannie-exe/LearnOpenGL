@@ -21,8 +21,8 @@ public:
 
     void set_data(uint32_t gl_buffer_type, uint32_t data_count, const T* buffer_data, uint32_t gl_buffer_usage);
 
-    inline void bind() const;
-    inline void unbind() const;
+    void bind() const;
+    void unbind() const;
 
     inline uint32_t get_id() const { return m_gl_id;  }
     inline uint32_t get_type() const { return m_gl_buffer_type; }

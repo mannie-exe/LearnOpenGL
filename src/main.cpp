@@ -5,6 +5,7 @@
 #include "data_buffer.h"
 #include "vertex_array.h"
 #include "attrib_array.h"
+#include "shader_program.h"
 
 
 static GLuint compile_gl_shader(GLenum shader_type, const std::string& source)
@@ -159,50 +160,21 @@ int main(void)
         /**
          * Shaders
          */
-        GLuint shader_program;
+        GL_ShaderProgram shader_program;
         uint32_t u_time_location;
         uint32_t u_color_location;
         {
-            // Configure shader program
-            shader_program = create_gl_shader(
-                // Vertex shader
-                R"glsl(
-            #version 460 core
+            // Initialize shader program
+            shader_program.create("./res/shaders/example.vert", "./res/shaders/example.frag");
+            shader_program.bind();
 
-            layout(location = 0) in vec4 position;
-            
-            void main()
-            {
-                gl_Position = position;
-            })glsl",
-                // Fragment shader
-                R"glsl(
-            #version 460 core
-
-            uniform float u_time;
-            uniform vec4 u_color;
-
-            out vec4 color;
-
-            void main()
-            {
-                color = vec4(u_color.rgb * ((sin(u_time) + 1.0) * 0.5), 1.0);
-            })glsl");
-            if (shader_program == 0)
-            {
-                exit(-1);
-            }
-            GL_CALL(glUseProgram(shader_program));
-
-            // Uniforms
-            GL_CALL(u_time_location = glGetUniformLocation(shader_program, "u_time"));
-            ASSERT(u_time_location != -1);
-            GL_CALL(u_color_location = glGetUniformLocation(shader_program, "u_color"));
-            ASSERT(u_color_location != -1);
+            // Configure shader uniforms
+            GL_CALL(u_time_location = glGetUniformLocation(shader_program.get_id(), "u_time"));
+            GL_CALL(u_color_location = glGetUniformLocation(shader_program.get_id(), "u_color"));
             GL_CALL(glUniform4f(u_color_location, 0.03f, 0.67f, 0.92f, 1.0f));
 
             // Clear shader state
-            GL_CALL(glUseProgram(0));
+            //shader_program.unbind();
         }
 
         /**
@@ -215,7 +187,7 @@ int main(void)
             index_buffer.bind();
 
             // Configure GL shader state
-            GL_CALL(glUseProgram(shader_program));
+            //shader_program.bind();
             GL_CALL(glUniform1f(u_time_location, clock() / (float)CLOCKS_PER_SEC));
 
             // Clear frame buffer
@@ -228,15 +200,10 @@ int main(void)
             GL_CALL(glfwPollEvents());
 
             // Clear GL state
-            GL_CALL(glUseProgram(0));
+            //shader_program.unbind();
             index_buffer.unbind();
             vertex_array.unbind();
         }
-
-        /**
-         * Clean-up before exiting rendering context
-         */
-        GL_CALL(glDeleteProgram(shader_program));
     }
 
     /**

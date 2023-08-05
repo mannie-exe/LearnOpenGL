@@ -33,6 +33,12 @@
     <ClCompile Include="src\gl_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\shader_program.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\file_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\data_buffer.h">
@@ -50,10 +56,18 @@
     <ClInclude Include="include\gl_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\shader_program.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\file_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include=".gitignore" />
     <None Include="README.md" />
+    <None Include="res\shaders\example.vert" />
+    <None Include="res\shaders\example.frag" />
   </ItemGroup>
 </Project>

@@ -53,14 +53,14 @@ void GL_VertexArray<T>::set_buffer(GL_AttribArray* attrib_array, GL_DataBuffer<T
 
 
 template<typename T>
-inline void GL_VertexArray<T>::bind() const
+void GL_VertexArray<T>::bind() const
 {
     GL_CALL(glBindVertexArray(m_gl_id));
 }
 
 
 template<typename T>
-inline void GL_VertexArray<T>::unbind() const
+void GL_VertexArray<T>::unbind() const
 {
     GL_CALL(glBindVertexArray(0));
 }
