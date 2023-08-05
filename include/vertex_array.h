@@ -13,12 +13,14 @@ private:
 
 public:
     GL_VertexArray();
+    GL_VertexArray(GL_AttribArray* attrib_array, GL_DataBuffer<T>* data_buffer);
+
     ~GL_VertexArray();
 
-    void gl_bind_buffer(GL_AttribArray* attrib_array, GL_DataBuffer<T>* data_buffer);
+    void set_buffer(GL_AttribArray* attrib_array, GL_DataBuffer<T>* data_buffer);
 
-    inline void gl_bind() const;
-    inline void gl_unbind() const;
+    inline void bind() const;
+    inline void unbind() const;
 
     inline uint32_t get_id() const { return m_gl_id; }
 };

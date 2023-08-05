@@ -117,14 +117,11 @@ int main(void)
         /**
          * GL Buffers
          */
-        GL_VertexArray<float>* vertex_array;
-        GL_DataBuffer<float>* vertex_buffer;
-        GL_AttribArray* attrib_array;
-        GL_DataBuffer<uint32_t>* index_buffer;
+        GL_VertexArray<float> vertex_array;
+        GL_DataBuffer<float> vertex_buffer;
+        GL_AttribArray attrib_array;
+        GL_DataBuffer<uint32_t> index_buffer;
         {
-            // Initialize VAO; it can exist without a VBO and its layout
-            vertex_array = new GL_VertexArray<float>();
-
             // VBO; configure vertex position buffer
             const uint32_t v_component_count = 2;
             const uint32_t v_count = 4;
@@ -135,14 +132,13 @@ int main(void)
                 -0.5f,  -0.5f,
                  0.5f,  -0.5f,
             };
-            vertex_buffer = new GL_DataBuffer<float>(GL_ARRAY_BUFFER, v_buffer_count, vertex_data, GL_STATIC_DRAW);
+            vertex_buffer.set_data(GL_ARRAY_BUFFER, v_buffer_count, vertex_data, GL_STATIC_DRAW);
 
             // VAA; configure VBO layout
-            attrib_array = new GL_AttribArray();
-            attrib_array->push<float>(2, false);
+            attrib_array.push<float>(2, false);
 
             // VAO; configure vertex array object
-            vertex_array->gl_bind_buffer(attrib_array, vertex_buffer);
+            vertex_array.set_buffer(&attrib_array, &vertex_buffer);
             
             // EBO; configure index/element buffer
             const uint32_t e_component_count = 3;
@@ -152,12 +148,12 @@ int main(void)
                 0, 1, 2,
                 2, 1, 3,
             };
-            index_buffer = new GL_DataBuffer<uint32_t>(GL_ELEMENT_ARRAY_BUFFER, e_buffer_count, element_data, GL_STATIC_DRAW);
+            index_buffer.set_data(GL_ELEMENT_ARRAY_BUFFER, e_buffer_count, element_data, GL_STATIC_DRAW);
 
             // Clear GL buffer state
-            vertex_array->gl_unbind();
-            index_buffer->gl_unbind();
-            vertex_buffer->gl_unbind();
+            vertex_array.unbind();
+            index_buffer.unbind();
+            vertex_buffer.unbind();
         }
 
         /**
@@ -215,8 +211,8 @@ int main(void)
         while (!glfwWindowShouldClose(window))
         {
             // Configure GL buffer state
-            vertex_array->gl_bind();
-            index_buffer->gl_bind();
+            vertex_array.bind();
+            index_buffer.bind();
 
             // Configure GL shader state
             GL_CALL(glUseProgram(shader_program));
@@ -225,7 +221,7 @@ int main(void)
             // Clear frame buffer
             GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
             // Draw buffers
-            GL_CALL(glDrawElements(GL_TRIANGLES, index_buffer->get_count(), GL_UNSIGNED_INT, nullptr));
+            GL_CALL(glDrawElements(GL_TRIANGLES, index_buffer.get_count(), GL_UNSIGNED_INT, nullptr));
             // Swap frame buffers
             GL_CALL(glfwSwapBuffers(window));
             // Run GLFW event loop
@@ -233,8 +229,8 @@ int main(void)
 
             // Clear GL state
             GL_CALL(glUseProgram(0));
-            index_buffer->gl_unbind();
-            vertex_array->gl_unbind();
+            index_buffer.unbind();
+            vertex_array.unbind();
         }
 
         /**

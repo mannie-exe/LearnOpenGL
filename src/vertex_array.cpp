@@ -8,7 +8,14 @@ template<typename T>
 GL_VertexArray<T>::GL_VertexArray()
 {
     GL_CALL(glGenVertexArrays(1, &m_gl_id));
-    GL_CALL(glBindVertexArray(m_gl_id));
+}
+
+
+template<typename T>
+GL_VertexArray<T>::GL_VertexArray(GL_AttribArray* attrib_array, GL_DataBuffer<T>* data_buffer) :
+    GL_VertexArray()
+{
+    set_buffer(attrib_array, data_buffer);
 }
 
 
@@ -20,10 +27,10 @@ GL_VertexArray<T>::~GL_VertexArray()
 
 
 template<typename T>
-void GL_VertexArray<T>::gl_bind_buffer(GL_AttribArray* attrib_array, GL_DataBuffer<T>* data_buffer)
+void GL_VertexArray<T>::set_buffer(GL_AttribArray* attrib_array, GL_DataBuffer<T>* data_buffer)
 {
     GL_CALL(glBindVertexArray(m_gl_id));
-    data_buffer->gl_bind();
+    data_buffer->bind();
 
     uint32_t attrib_offset = 0;
     for (uint32_t idx = 0; idx < attrib_array->get_count(); idx++)
@@ -45,14 +52,14 @@ void GL_VertexArray<T>::gl_bind_buffer(GL_AttribArray* attrib_array, GL_DataBuff
 
 
 template<typename T>
-inline void GL_VertexArray<T>::gl_bind() const
+inline void GL_VertexArray<T>::bind() const
 {
     GL_CALL(glBindVertexArray(m_gl_id));
 }
 
 
 template<typename T>
-inline void GL_VertexArray<T>::gl_unbind() const
+inline void GL_VertexArray<T>::unbind() const
 {
     GL_CALL(glBindVertexArray(0));
 }
