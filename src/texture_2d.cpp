@@ -10,10 +10,10 @@ GL_Texture2D::GL_Texture2D() :
 }
 
 
-GL_Texture2D::GL_Texture2D(const std::string& image_file_path, bool flip_vertically, int32_t channels) :
+GL_Texture2D::GL_Texture2D(const std::string& image_file_path, bool flip_vertically, bool transparent) :
     GL_Texture2D()
 {
-    load_image(image_file_path, flip_vertically, channels);
+    load_image(image_file_path, flip_vertically, transparent);
 }
 
 
@@ -23,17 +23,17 @@ GL_Texture2D::~GL_Texture2D()
 }
 
 
-void GL_Texture2D::load_image(const std::string& image_file_path, bool flip_vertically, int32_t channels)
+void GL_Texture2D::load_image(const std::string& image_file_path, bool flip_vertically, bool transparent)
 {
-    load_image(0, image_file_path, flip_vertically, channels);
+    load_image(0, image_file_path, flip_vertically, transparent);
 }
 
 
-void GL_Texture2D::load_image(uint32_t gl_texture_slot, const std::string& image_file_path, bool flip_vertically, int32_t channels)
+void GL_Texture2D::load_image(uint32_t gl_texture_slot, const std::string& image_file_path, bool flip_vertically, bool transparent)
 {
     // Load image
     stbi_set_flip_vertically_on_load(flip_vertically);
-    m_image_buffer = stbi_load(image_file_path.c_str(), &m_width, &m_height, &m_channels, channels);
+    m_image_buffer = stbi_load(image_file_path.c_str(), &m_width, &m_height, &m_channels, 0);
     m_file_path = image_file_path;
     
     // Bind texture
@@ -46,7 +46,8 @@ void GL_Texture2D::load_image(uint32_t gl_texture_slot, const std::string& image
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP));
 
     // Load image into texture
-    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, m_image_buffer));
+    GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, m_width, m_height, 0, transparent ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, m_image_buffer));
+    GL_CALL(glGenerateMipmap(GL_TEXTURE_2D));
 
     // Clear image buffer (which may be empty)
     if (m_image_buffer)

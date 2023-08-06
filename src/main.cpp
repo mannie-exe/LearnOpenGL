@@ -58,7 +58,7 @@ int main(void)
         GL_DataBuffer<float> vertex_buffer;
         GL_AttribArray attrib_array;
         GL_DataBuffer<uint32_t> index_buffer;
-        GL_Texture2D texture0;
+        GL_Texture2D texture0, texture1;
         {
             // VBO; configure vertex position buffer
             const uint32_t v_component_count = 4;
@@ -105,11 +105,13 @@ int main(void)
             shader_program.bind();
 
             // Load shader texture(s)
-            texture0.load_image(0, "./res/textures/uv_texture.jpg", true, 3);
+            texture0.load_image(0, "./res/textures/uv_texture.jpg", true, false);
+            texture1.load_image(1, "./res/textures/fug.png", true, true);
 
             // Configure static shader uniforms
             shader_program.set_uniform_4f("u_color", 0.03f, 0.67f, 0.92f, 1.0f);
             shader_program.set_uniform_1i("u_texture0", 0);
+            shader_program.set_uniform_1i("u_texture1", 1);
 
             // Clear shader state
             shader_program.unbind();

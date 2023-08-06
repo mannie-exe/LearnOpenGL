@@ -16,12 +16,12 @@ private:
 
 public:
     GL_Texture2D();
-    GL_Texture2D(const std::string& image_file_path, bool flip_vertically = false, int32_t channels = 4);
+    GL_Texture2D(const std::string& image_file_path, bool flip_vertically = false, bool transparent = false);
 
     ~GL_Texture2D();
 
-    void load_image(const std::string& image_file_path, bool flip_vertically = false, int32_t channels = 4);
-    void load_image(uint32_t gl_texture_slot, const std::string& image_file_path, bool flip_vertically = false, int32_t channels = 4);
+    void load_image(const std::string& image_file_path, bool flip_vertically = false, bool transparent = false);
+    void load_image(uint32_t gl_texture_slot, const std::string& image_file_path, bool flip_vertically = false, bool transparent = false);
 
     void gl_bind(uint32_t gl_texture_slot = 0) const;
     void gl_unbind() const;
