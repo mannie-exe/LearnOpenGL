@@ -6,6 +6,7 @@
 #include "vertex_array.h"
 #include "attrib_array.h"
 #include "shader_program.h"
+#include "texture_2d.h"
 
 
 int main(void)
@@ -57,20 +58,22 @@ int main(void)
         GL_DataBuffer<float> vertex_buffer;
         GL_AttribArray attrib_array;
         GL_DataBuffer<uint32_t> index_buffer;
+        GL_Texture2D texture0;
         {
             // VBO; configure vertex position buffer
-            const uint32_t v_component_count = 2;
+            const uint32_t v_component_count = 4;
             const uint32_t v_count = 4;
             const uint32_t v_buffer_count = v_count * v_component_count;
             const float vertex_data[v_buffer_count] = {
-                -0.5f,   0.5f,
-                 0.5f,   0.5f,
-                -0.5f,  -0.5f,
-                 0.5f,  -0.5f,
+                -0.5f,   0.5f,   0.0f, 1.0f,
+                 0.5f,   0.5f,   1.0f, 1.0f,
+                -0.5f,  -0.5f,   0.0f, 0.0f,
+                 0.5f,  -0.5f,   1.0f, 0.0f,
             };
             vertex_buffer.set_data(GL_ARRAY_BUFFER, v_buffer_count, vertex_data, GL_STATIC_DRAW);
 
             // VAA; configure VBO layout
+            attrib_array.push<float>(2, false);
             attrib_array.push<float>(2, false);
 
             // VAO; configure vertex array object
@@ -87,9 +90,9 @@ int main(void)
             index_buffer.set_data(GL_ELEMENT_ARRAY_BUFFER, e_buffer_count, element_data, GL_STATIC_DRAW);
 
             // Clear GL buffer state
-            vertex_array.unbind();
             index_buffer.unbind();
             vertex_buffer.unbind();
+            vertex_array.unbind();
         }
 
         /**
@@ -101,8 +104,12 @@ int main(void)
             shader_program.create("./res/shaders/example.vert", "./res/shaders/example.frag");
             shader_program.bind();
 
+            // Load shader texture(s)
+            texture0.load_image(0, "./res/textures/uv_texture.jpg", true, 3);
+
             // Configure static shader uniforms
             shader_program.set_uniform_4f("u_color", 0.03f, 0.67f, 0.92f, 1.0f);
+            shader_program.set_uniform_1i("u_texture0", 0);
 
             // Clear shader state
             shader_program.unbind();

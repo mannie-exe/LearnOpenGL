@@ -39,6 +39,12 @@
     <ClCompile Include="src\file_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\texture_2d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="deps\stb_image\stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\data_buffer.h">
@@ -62,6 +68,12 @@
     <ClInclude Include="include\file_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\texture_2d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="deps\stb_image\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -69,5 +81,13 @@
     <None Include="README.md" />
     <None Include="res\shaders\example.vert" />
     <None Include="res\shaders\example.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\textures\uv_texture.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\fug.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 #pragma once
 
+#define GLEW_STATIC
+
 #include <cstdint>
 #include <GL/glew.h>
 #include "vertex_array.h"
