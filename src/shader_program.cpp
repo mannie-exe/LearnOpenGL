@@ -40,7 +40,7 @@ uint32_t GL_ShaderProgram::compile_shader(uint32_t gl_shader_type, const char* s
         GL_CALL(glGetShaderInfoLog(shader_id, log_length, &log_length, log_message));
         GL_CALL(glDeleteShader(shader_id));
 
-        fprintf(stderr, "ERROR | Failed to compile shader\n%s", log_message);
+        fprintf(stderr, "ERROR | Failed to compile shader\n%s\n", log_message);
         return 0;
     }
 
@@ -57,7 +57,7 @@ int32_t GL_ShaderProgram::get_uniform_location(const std::string& uniform_name)
         GL_CALL(int32_t uniform_location = glGetUniformLocation(m_gl_id, name_raw));
         if (uniform_location == -1)
         {
-            fprintf(stdout, "WARN | Shader uniform location not found [uniform: %s, shader_program_id: %d]", name_raw, m_gl_id);
+            fprintf(stdout, "WARN | Shader uniform location not found [uniform: %s, shader_program_id: %d]\n", name_raw, m_gl_id);
         }
         m_uniform_location_cache[name_raw] = uniform_location;
     }
@@ -84,9 +84,15 @@ void GL_ShaderProgram::create(const std::string& vert_file_path, const std::stri
 }
 
 
-void GL_ShaderProgram::set_uniform_1f(const std::string& uniform_name, float v0)
+void GL_ShaderProgram::set_uniform_1i(const std::string& uniform_name, int32_t value)
 {
-    GL_CALL(glUniform1f(get_uniform_location(uniform_name), v0));
+    GL_CALL(glUniform1i(get_uniform_location(uniform_name), value));
+}
+
+
+void GL_ShaderProgram::set_uniform_1f(const std::string& uniform_name, float value)
+{
+    GL_CALL(glUniform1f(get_uniform_location(uniform_name), value));
 }
 
 

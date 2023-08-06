@@ -23,7 +23,8 @@ public:
 
     void create(const std::string& vert_file_path, const std::string& frag_file_path);
 
-    void set_uniform_1f(const std::string& uniform_name, float v0);
+    void set_uniform_1i(const std::string& uniform_name, int32_t value);
+    void set_uniform_1f(const std::string& uniform_name, float value);
     void set_uniform_4f(const std::string& uniform_name, float v0, float v1, float v2, float v3);
 
     void bind() const;
