@@ -25,7 +25,8 @@ void GL_AttribArray::push(uint32_t count, bool normalized)
         count,
         gl_type,
         normalized ? GL_TRUE : GL_FALSE,
-        data_size});
+        data_size,
+        stride});
     m_stride += stride;
 }
 
